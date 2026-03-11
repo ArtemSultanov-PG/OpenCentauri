@@ -1,0 +1,2191 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+    
+    
+      
+        <title>Руководство по реализации поддержки термистора 104NT (B3905) в OpenCentauri - OpenCentauri</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#104nt-b3905-opencentauri" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="OpenCentauri" class="md-header__button md-logo" aria-label="OpenCentauri" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35z"></path></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            OpenCentauri
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Руководство по реализации поддержки термистора 104NT (B3905) в OpenCentauri
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Switch to light mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Switch to dark mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Switch to light mode" type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/suchmememanyskill/OpenCentauri" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    OpenCentauri
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../hardware/CC1/" class="md-tabs__link">
+          
+  
+  
+  Hardware
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../software/" class="md-tabs__link">
+          
+  
+  
+  Software
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../mods/machine_mods/" class="md-tabs__link">
+          
+  
+  
+  Mods
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="OpenCentauri" class="md-nav__button md-logo" aria-label="OpenCentauri" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35z"></path></svg>
+
+    </a>
+    OpenCentauri
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/suchmememanyskill/OpenCentauri" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    OpenCentauri
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2">
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hardware
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Hardware
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_1">
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CC1
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CC1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hardware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC1/mainboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mainboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC1/fel-uart-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEL &amp; UART Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC1/emmc-tapping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EMMC Tap Points
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC1/toolhead/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Toolhead
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC1/camera/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Camera
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC1/bed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bed
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC1/screen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Screen
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC1/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Miscellaneous
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC1/documentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Official Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2">
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CC2
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CC2
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hardware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC2/mainboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mainboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC2/toolhead/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Toolhead
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC2/screen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Screen
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC2/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Miscellaneous
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC2/CANVAS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CANVAS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/CC2/documentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Official Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3">
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Software
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Software
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../software/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../software/partitions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partitions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../software/updates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../software/updates-cc2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Updates (CC2)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../software/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../software/custom-gcode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom gcode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../software/embedded-firmware/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embedded Firmware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../software/FEL-mode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4">
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mods
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Mods
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mods/machine_mods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Machine Mods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mods/printable_mods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Printable Mods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mods/light_mods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Light Mods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_4">
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Klipper via mainboard replacement
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Klipper via mainboard replacement
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../klipper-via-mainboard-replacement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Main
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../klipper-via-mainboard-replacement/recognize-hotend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recognize Hotend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../klipper-via-mainboard-replacement/printer-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Printer Config
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../klipper-via-mainboard-replacement/mainsail-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mainsail Config
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../klipper-via-mainboard-replacement/udev-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UDEV Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_5">
+        
+          
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Patched firmware
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Patched firmware
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../patched-firmware/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Patched firmware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../patched-firmware/modified_start_end_machine_gcode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modified slicer machine gcode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="104nt-b3905-opencentauri">Руководство по реализации поддержки термистора 104NT (B3905) в OpenCentauri</h1>
+<p><strong>Создано:</strong> 10 марта 2026<br>
+<strong>Обновлён:</strong> 10 марта 2026<br>
+<strong>Категория:</strong> Hardware / Firmware Implementation Guide</p>
+<h2 id="_1">Краткое описание</h2>
+<p>Этот руководство описывает необходимые изменения в коде OpenCentauri для поддержки термистора 104NT (MGB18-104F39050L32, B3905) в принтере Elegoo Centauri Carbon (CC1).</p>
+<h2 id="_2">Проблема</h2>
+<p><strong>Стандартный термистор в CC1:</strong> NTC100k <strong>B3950</strong> (указано в <a href="../../hardware/CC1/mainboard/"><code>docs/hardware/CC1/mainboard.md</code></a>)<br>
+<strong>Термистор 104NT:</strong> NTC100k <strong>B3905</strong> (MGB18-104F39050L32)<br>
+<strong>Конфликт:</strong> Klipper конфигурация по умолчанию настроена на B3905, но физический термистор в CC1 — B3950</p>
+<h2 id="_3">Изменения в конфигурации</h2>
+<h3 id="1">1. Обновление конфигурационных файлов</h3>
+<h4 id="docsklipper-via-mainboard-replacementprinter-configmd">Файл: <code>docs/klipper-via-mainboard-replacement/printer-config.md</code></h4>
+<p><strong>До:</strong>
+</p><div class="highlight"><pre><span></span><code><span class="k">[extruder]</span>
+<span class="na">sensor_type</span><span class="o">:</span><span class="w"> </span><span class="s">NTC 100K MGB18-104F39050L32</span>
+<span class="na">min_temp</span><span class="o">:</span><span class="w"> </span><span class="s">-10</span>
+<span class="na">max_temp</span><span class="o">:</span><span class="w"> </span><span class="s">335</span>
+<span class="na">control</span><span class="o">:</span><span class="w"> </span><span class="s">pid</span>
+<span class="na">pid_Kp</span><span class="o">:</span><span class="w"> </span><span class="s">28.993265</span>
+<span class="na">pid_Ki</span><span class="o">:</span><span class="w"> </span><span class="s">6.103818</span>
+<span class="na">pid_Kd</span><span class="o">:</span><span class="w"> </span><span class="s">34.429656</span>
+</code></pre></div><p></p>
+<p><strong>После:</strong>
+</p><div class="highlight"><pre><span></span><code><span class="k">[extruder]</span>
+<span class="na">sensor_type</span><span class="o">:</span><span class="w"> </span><span class="s">NTC 100K MGB18-104F39050L32</span>
+<span class="na">min_temp</span><span class="o">:</span><span class="w"> </span><span class="s">-10</span>
+<span class="na">max_temp</span><span class="o">:</span><span class="w"> </span><span class="s">335</span>
+<span class="na">control</span><span class="o">:</span><span class="w"> </span><span class="s">pid</span>
+<span class="na">pid_Kp</span><span class="o">:</span><span class="w"> </span><span class="s">28.993265</span>
+<span class="na">pid_Ki</span><span class="o">:</span><span class="w"> </span><span class="s">6.103818</span>
+<span class="na">pid_Kd</span><span class="o">:</span><span class="w"> </span><span class="s">34.429656</span>
+</code></pre></div><p></p>
+<p><em>Примечание: <code>sensor_type: NTC 100K MGB18-104F39050L32</code> корректно для термистора 104NT (B3905). Для 100k (B3950) используйте <code>sensor_type: NTC 100K beta 3950</code>.</em></p>
+<h4 id="docssoftwareklipperconfigmd">Файл: <code>docs/software/klipperconfig.md</code></h4>
+<p><strong>До:</strong>
+</p><div class="highlight"><pre><span></span><code><span class="na">sensor_type</span><span class="o">:</span><span class="w"> </span><span class="s">NTC 100K beta 4300</span>
+</code></pre></div><p></p>
+<p><strong>После:</strong>
+</p><div class="highlight"><pre><span></span><code><span class="c1"># Для 104NT (B3905) - термистор по умолчанию в конфигурации</span>
+<span class="na">sensor_type</span><span class="o">:</span><span class="w"> </span><span class="s">NTC 100K MGB18-104F39050L32</span>
+
+<span class="c1"># Для 100k (B3950) - альтернативный термистор</span>
+<span class="c1"># sensor_type: NTC 100K beta 3950</span>
+</code></pre></div><p></p>
+<h3 id="2">2. Добавление поддержки в конфигурацию генератора</h3>
+<p>Если OpenCentauri использует генератор конфигурации, добавьте опцию выбора термистора:</p>
+<p><strong>Файл: <code>docs/software/klipperconfig.md</code></strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Выбор термистора</span>
+<span class="c1"># Варианты: 104NT (B3905), 100k (B3950)</span>
+<span class="w"> </span><span class="na">thermistor_type</span><span class="o">:</span><span class="w"> </span><span class="s">104NT</span><span class="w">  </span><span class="c1"># По умолчанию</span>
+
+<span class="k">[extruder]</span>
+<span class="na">sensor_type</span><span class="o">:</span><span class="w"> </span>
+<span class="na">{% if thermistor_type =</span><span class="o">=</span><span class="w"> </span><span class="s">"104NT"</span><span class="w"> </span><span class="na">%}</span>
+<span class="w">    </span><span class="na">NTC 100K MGB18-104F39050L32</span>
+<span class="na">{% elif thermistor_type =</span><span class="o">=</span><span class="w"> </span><span class="s">"100k"</span><span class="w"> </span><span class="na">%}</span>
+<span class="w">    </span><span class="na">NTC 100K beta 3950</span>
+<span class="na">{% endif %}</span>
+</code></pre></div>
+<h2 id="_4">Изменения в документации</h2>
+<h3 id="1-docshardwarecc1mainboardmd">1. Обновление <a href="../../hardware/CC1/mainboard/"><code>docs/hardware/CC1/mainboard.md</code></a></h3>
+<p><strong>Добавить раздел:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="gu">### Thermistor compatibility</span>
+
+| Тип | Бета-коэффициент | Конфигурация | Примечание |
+|-----|------------------|--------------|------------|
+| Standard | NTC100k B3950 | <span class="sb">`sensor_type: NTC 100K beta 3950`</span> | Физический термистор по умолчанию |
+| Alternative | NTC100k B3905 (104NT) | <span class="sb">`sensor_type: NTC 100K MGB18-104F39050L32`</span> | Альтернативный термистор |
+
+Для замены термистора:
+
+<span class="k">1.</span> <span class="gs">**Физическая замена:**</span> Замените физический термистор на плате
+<span class="k">2.</span> <span class="gs">**Конфигурационное изменение:**</span> Обновите <span class="sb">`sensor_type`</span> в <span class="sb">`printer.cfg`</span>
+<span class="k">3.</span> <span class="gs">**PID-калибровка:**</span> Выполните <span class="sb">`PID_CALIBRATE HEATER=extruder TARGET=200`</span>
+<span class="k">4.</span> <span class="gs">**Сохранение:**</span> Выполните <span class="sb">`SAVE_CONFIG`</span>
+
+<span class="gu">### Технические характеристики</span>
+
+| Температура | B3950 (100k) | B3905 (104NT) | Разница |
+|-------------|--------------|---------------|---------|
+| 25°C | 100 кОм | 100 кОм | 0 кОм |
+| 100°C | 11.3 кОм | 11.4 кОм | 0.1 кОм |
+| 200°C | 0.68 кОм | 0.52 кОм | 0.16 кОм |
+| 260°C | 0.37 кОм | 0.27 кОм | 0.10 кОм |
+</code></pre></div>
+<h3 id="2-docshardwarecc1toolheadmd">2. Обновление <a href="../../hardware/CC1/toolhead/"><code>docs/hardware/CC1/toolhead.md</code></a></h3>
+<p><strong>Добавить раздел:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="gu">### Thermistor information</span>
+
+The toolhead board uses a thermistor for temperature measurement. The standard configuration supports the following thermistor types:
+
+<span class="k">-</span><span class="w"> </span><span class="gs">**100k (Creality Sprite)**</span>: B3950 coefficient, standard thermistor
+<span class="k">-</span><span class="w"> </span><span class="gs">**104NT (MGB18-104F39050L32)**</span>: B3905 coefficient, alternative thermistor
+
+For using 104NT thermistor instead of 100k, change <span class="sb">`sensor_type`</span> in <span class="sb">`printer.cfg`</span>:
+
+```ini
+[extruder]
+sensor_type: NTC 100K MGB18-104F39050L32
+</code></pre></div>
+<p>Run <code>PID_CALIBRATE HEATER=extruder TARGET=200</code> after thermistor replacement.
+</p><div class="highlight"><pre><span></span><code>### 3. Создание новой страницы [`docs/hardware/CC1/thermistor.md`](../hardware/CC1/thermistor.md)
+
+**Создать файл:**
+
+```markdown
+# Thermistor Information
+
+This page describes thermistor options for Elegoo Centauri Carbon (CC1) and their configuration.
+
+## Standard thermistor
+
+The standard thermistor in CC1 is **NTC100k B3950**. This is the thermistor pre-installed on the toolhead board.
+
+### Configuration
+
+```ini
+[extruder]
+sensor_type: NTC 100K beta 3950
+</code></pre></div><p></p>
+<h2 id="alternative-thermistor-104nt">Alternative thermistor: 104NT</h2>
+<p>The 104NT (MGB18-104F39050L32) thermistor has B3905 coefficient and can be used as an alternative.</p>
+<h3 id="configuration">Configuration</h3>
+<div class="highlight"><pre><span></span><code><span class="k">[extruder]</span>
+<span class="na">sensor_type</span><span class="o">:</span><span class="w"> </span><span class="s">NTC 100K MGB18-104F39050L32</span>
+</code></pre></div>
+<h2 id="technical-specifications">Technical specifications</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>B3950 (100k)</th>
+<th>B3905 (104NT)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nominal @ 25°C</td>
+<td>100 kΩ</td>
+<td>100 kΩ</td>
+</tr>
+<tr>
+<td>B-parameter</td>
+<td>3950 K</td>
+<td>3905 K</td>
+</tr>
+<tr>
+<td>Tolerance</td>
+<td>±1-5%</td>
+<td>±1%</td>
+</tr>
+<tr>
+<td>Operating range</td>
+<td>-40°C to +150°C</td>
+<td>-40°C to +125°C</td>
+</tr>
+<tr>
+<td>Resistance @ 200°C</td>
+<td>0.68 kΩ</td>
+<td>0.52 kΩ</td>
+</tr>
+</tbody>
+</table>
+<h2 id="temperature-table-comparison">Temperature table comparison</h2>
+<table>
+<thead>
+<tr>
+<th>Temperature</th>
+<th>B3950</th>
+<th>B3905</th>
+<th>Error (B3905 vs B3950)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>25°C</td>
+<td>100 kΩ</td>
+<td>100 kΩ</td>
+<td>0 kΩ</td>
+</tr>
+<tr>
+<td>100°C</td>
+<td>11.3 kΩ</td>
+<td>11.4 kΩ</td>
+<td>0.1 kΩ</td>
+</tr>
+<tr>
+<td>200°C</td>
+<td>0.68 kΩ</td>
+<td>0.52 kΩ</td>
+<td>0.16 kΩ</td>
+</tr>
+<tr>
+<td>260°C</td>
+<td>0.37 kΩ</td>
+<td>0.27 kΩ</td>
+<td>0.10 kΩ</td>
+</tr>
+</tbody>
+</table>
+<h2 id="calibration-procedure">Calibration procedure</h2>
+<ol>
+<li><strong>Physical replacement:</strong> Replace the thermistor on the board</li>
+<li><strong>Configuration update:</strong> Change <code>sensor_type</code> in <code>printer.cfg</code></li>
+<li><strong>PID calibration:</strong> Run <code>PID_CALIBRATE HEATER=extruder TARGET=200</code></li>
+<li><strong>Save configuration:</strong> Run <code>SAVE_CONFIG</code></li>
+<li><strong>Verification:</strong> Compare temperature with external thermometer
+<div class="highlight"><pre><span></span><code>## Изменения в коде прошивки (если требуется)
+
+### 1. Проверка поддержки термистора 104NT в Klipper
+
+Термистор 104NT (MGB18-104F39050L32) **уже поддерживается в Klipper** по умолчанию. Проверка:
+
+```bash
+# В консоли Klipper
+GET_THERMISTOR sensor=extruder
+# Должен показать: NTC 100K MGB18-104F39050L32
+</code></pre></div></li>
+</ol>
+<h3 id="2_1">2. Если требуется добавление новой температурной таблицы</h3>
+<p>Если Klipper не поддерживает <code>NTC 100K MGB18-104F39050L32</code>, добавьте таблицу в <code>thermistor.c</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"NTC 100K MGB18-104F39050L32"</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// Resistance values at 25°C, 50°C, 100°C, 150°C, 200°C, 250°C, 300°C</span>
+<span class="w">    </span><span class="p">.</span><span class="n">resistance_table</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="mi">100000</span><span class="p">,</span><span class="w">   </span><span class="c1">// 25°C</span>
+<span class="w">        </span><span class="mi">42580</span><span class="p">,</span><span class="w">    </span><span class="c1">// 50°C</span>
+<span class="w">        </span><span class="mi">11320</span><span class="p">,</span><span class="w">    </span><span class="c1">// 100°C</span>
+<span class="w">        </span><span class="mi">3400</span><span class="p">,</span><span class="w">     </span><span class="c1">// 150°C</span>
+<span class="w">        </span><span class="mi">1060</span><span class="p">,</span><span class="w">     </span><span class="c1">// 200°C</span>
+<span class="w">        </span><span class="mi">350</span><span class="p">,</span><span class="w">      </span><span class="c1">// 250°C</span>
+<span class="w">        </span><span class="mi">120</span><span class="p">,</span><span class="w">      </span><span class="c1">// 300°C</span>
+<span class="w">        </span><span class="mi">0</span><span class="w">         </span><span class="c1">// End marker</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="c1">// Temperature values in Celsius</span>
+<span class="w">    </span><span class="p">.</span><span class="n">temp_table</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="mi">25</span><span class="p">,</span>
+<span class="w">        </span><span class="mi">50</span><span class="p">,</span>
+<span class="w">        </span><span class="mi">100</span><span class="p">,</span>
+<span class="w">        </span><span class="mi">150</span><span class="p">,</span>
+<span class="w">        </span><span class="mi">200</span><span class="p">,</span>
+<span class="w">        </span><span class="mi">250</span><span class="p">,</span>
+<span class="w">        </span><span class="mi">300</span><span class="p">,</span>
+<span class="w">        </span><span class="mi">-1</span><span class="w">  </span><span class="c1">// End marker</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="p">},</span>
+</code></pre></div>
+<h3 id="3-pid-">3. Обновление PID-конфигурации (если требуется)</h3>
+<p>Если температурная таблица изменена, может потребоваться перекалибровка PID:</p>
+<div class="highlight"><pre><span></span><code>PID_CALIBRATE<span class="w"> </span><span class="nv">HEATER</span><span class="o">=</span>extruder<span class="w"> </span><span class="nv">TARGET</span><span class="o">=</span><span class="m">200</span>
+SAVE_CONFIG
+</code></pre></div>
+<h2 id="_5">Проверка изменений</h2>
+<h3 id="1_1">1. Проверка термистора типа</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># В консоли Klipper</span>
+GET_THERMISTOR<span class="w"> </span><span class="nv">sensor</span><span class="o">=</span>extruder
+<span class="c1"># Ожидаемый результат: NTC 100K MGB18-104F39050L32</span>
+</code></pre></div>
+<h3 id="2-adc">2. Проверка ADC значения</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># В консоли Klipper</span>
+ADCVoltage<span class="w"> </span><span class="nv">pin</span><span class="o">=</span>PA3
+<span class="c1"># Ожидаемое значение: ~0.83V при 25°C</span>
+</code></pre></div>
+<h3 id="3">3. Проверка температуры</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># В консоли Klipper</span>
+M105
+<span class="c1"># Ожидаемый результат: T=25.0 /0.0 (при 25°C)</span>
+</code></pre></div>
+<h3 id="4-pid-">4. Проверка PID-калибровки</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># В консоли Klipper</span>
+PID_CALIBRATE<span class="w"> </span><span class="nv">HEATER</span><span class="o">=</span>extruder<span class="w"> </span><span class="nv">TARGET</span><span class="o">=</span><span class="m">200</span>
+<span class="c1"># После завершения:</span>
+<span class="c1"># SAVE_CONFIG</span>
+</code></pre></div>
+<h2 id="_6">Сводка изменений</h2>
+<table>
+<thead>
+<tr>
+<th>Файл</th>
+<th>Изменение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docs/hardware/CC1/mainboard.md</code></td>
+<td>Добавление раздела "Thermistor compatibility"</td>
+</tr>
+<tr>
+<td><code>docs/hardware/CC1/toolhead.md</code></td>
+<td>Добавление раздела "Thermistor information"</td>
+</tr>
+<tr>
+<td><code>docs/hardware/CC1/thermistor.md</code></td>
+<td>Создание новой страницы с термисторной информацией</td>
+</tr>
+<tr>
+<td><code>docs/software/klipperconfig.md</code></td>
+<td>Обновление <code>sensor_type</code> для 104NT</td>
+</tr>
+<tr>
+<td><code>docs/klipper-via-mainboard-replacement/printer-config.md</code></td>
+<td>Уточнение <code>sensor_type</code> для 104NT</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_7">Требуемые действия для разработчиков</h2>
+<ol>
+<li><strong>Проверить поддержку термистора 104NT в Klipper</strong> (уже поддерживается)</li>
+<li><strong>Обновить документацию</strong> (см. раздел "Изменения в документации")</li>
+<li><strong>Обновить конфигурационные файлы</strong> (см. раздел "Изменения в конфигурации")</li>
+<li><strong>Добавить страницу <code>docs/hardware/CC1/thermistor.md</code></strong> (см. раздел "Изменения в документации")</li>
+<li><strong>Проверить изменеения</strong> (см. раздел "Проверка изменений")</li>
+</ol>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 10, 2026 18:23:49 UTC">March 10, 2026</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Created">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"></path></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 10, 2026 18:23:49 UTC">March 10, 2026</span>
+  </span>
+
+    
+    
+    
+  </aside>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://discord.gg/t6Cft3wNJ3" target="_blank" rel="noopener" title="discord.gg" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M492.5 69.8c-.2-.3-.4-.6-.8-.7-38.1-17.5-78.4-30-119.7-37.1-.4-.1-.8 0-1.1.1s-.6.4-.8.8c-5.5 9.9-10.5 20.2-14.9 30.6-44.6-6.8-89.9-6.8-134.4 0-4.5-10.5-9.5-20.7-15.1-30.6-.2-.3-.5-.6-.8-.8s-.7-.2-1.1-.2C162.5 39 122.2 51.5 84.1 69c-.3.1-.6.4-.8.7C7.1 183.5-13.8 294.6-3.6 404.2c0 .3.1.5.2.8s.3.4.5.6c44.4 32.9 94 58 146.8 74.2.4.1.8.1 1.1 0s.7-.4.9-.7c11.3-15.4 21.4-31.8 30-48.8.1-.2.2-.5.2-.8s0-.5-.1-.8-.2-.5-.4-.6-.4-.3-.7-.4c-15.8-6.1-31.2-13.4-45.9-21.9-.3-.2-.5-.4-.7-.6s-.3-.6-.3-.9 0-.6.2-.9.3-.5.6-.7c3.1-2.3 6.2-4.7 9.1-7.1.3-.2.6-.4.9-.4s.7 0 1 .1c96.2 43.9 200.4 43.9 295.5 0 .3-.1.7-.2 1-.2s.7.2.9.4c2.9 2.4 6 4.9 9.1 7.2.2.2.4.4.6.7s.2.6.2.9-.1.6-.3.9-.4.5-.6.6c-14.7 8.6-30 15.9-45.9 21.8-.2.1-.5.2-.7.4s-.3.4-.4.7-.1.5-.1.8.1.5.2.8c8.8 17 18.8 33.3 30 48.8.2.3.6.6.9.7s.8.1 1.1 0c52.9-16.2 102.6-41.3 147.1-74.2.2-.2.4-.4.5-.6s.2-.5.2-.8c12.3-126.8-20.5-236.9-86.9-334.5zm-302 267.7c-29 0-52.8-26.6-52.8-59.2s23.4-59.2 52.8-59.2c29.7 0 53.3 26.8 52.8 59.2 0 32.7-23.4 59.2-52.8 59.2m195.4 0c-29 0-52.8-26.6-52.8-59.2s23.4-59.2 52.8-59.2c29.7 0 53.3 26.8 52.8 59.2 0 32.7-23.2 59.2-52.8 59.2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.tabs", "navigation.expand", "toc.integrate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>
